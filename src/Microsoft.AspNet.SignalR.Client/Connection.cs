@@ -246,12 +246,12 @@ namespace Microsoft.AspNet.SignalR.Client
         /// </summary>
         public IDictionary<string, string> Headers { get; private set; }
 
-#if !SILVERLIGHT
+//#if !SILVERLIGHT
         /// <summary>
         /// Gets of sets proxy information for the connection.
         /// </summary>
         public IWebProxy Proxy { get; set; }
-#endif
+//#endif
 
         /// <summary>
         /// Gets the url for the connection.
@@ -730,8 +730,8 @@ namespace Microsoft.AspNet.SignalR.Client
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "This is called by the transport layer")]
         void IConnection.PrepareRequest(IRequest request)
         {
-#if WINDOWS_PHONE
-            // http://msdn.microsoft.com/en-us/library/ff637320(VS.95).aspx
+#if PORTABLE
+            //Cannot set User Agent in Silverlight and therefore cannot do it in Portable
             request.UserAgent = CreateUserAgentString("SignalR.Client.WP8");
 #elif SILVERLIGHT
             // Useragent is not possible to set with Silverlight, not on the UserAgent property of the request nor in the Headers key/value in the request
@@ -750,14 +750,15 @@ namespace Microsoft.AspNet.SignalR.Client
         {
             if (_assemblyVersion == null)
             {
-#if NETFX_CORE
-                _assemblyVersion = new Version("2.0.0");
-#else
+//#if NETFX_CORE
+//                _assemblyVersion = new Version("2.0.0");
+//#else
+//                _assemblyVersion = new AssemblyName(typeof(Connection).Assembly.FullName).Version;
+//#endif
                 _assemblyVersion = new AssemblyName(typeof(Connection).Assembly.FullName).Version;
-#endif
             }
 
-#if NETFX_CORE
+#if PORTABLE
             return String.Format(CultureInfo.InvariantCulture, "{0}/{1} ({2})", client, _assemblyVersion, "Unknown OS");
 #else
             return String.Format(CultureInfo.InvariantCulture, "{0}/{1} ({2})", client, _assemblyVersion, Environment.OSVersion);
@@ -767,7 +768,7 @@ namespace Microsoft.AspNet.SignalR.Client
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "The Version constructor can throw exceptions of many different types. Failure is indicated by returning false.")]
         private static bool TryParseVersion(string versionString, out Version version)
         {
-#if WINDOWS_PHONE || NET35
+#if NET35
             try
             {
                 version = new Version(versionString);
@@ -814,7 +815,7 @@ namespace Microsoft.AspNet.SignalR.Client
                 Debug.WriteLine(value);
             }
 
-#if NETFX_CORE
+#if PORTABLE
             public override void Write(char value)
             {
                 // This is wrong we don't call it
