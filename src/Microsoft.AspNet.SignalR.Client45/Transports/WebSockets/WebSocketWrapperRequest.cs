@@ -30,7 +30,7 @@ namespace Microsoft.AspNet.SignalR.Client.Transports
             }
             set
             {
-
+                _clientWebSocket.Options.
             }
         }
 

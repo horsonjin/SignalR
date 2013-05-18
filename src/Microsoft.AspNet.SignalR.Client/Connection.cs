@@ -181,7 +181,7 @@ namespace Microsoft.AspNet.SignalR.Client
                 _keepAliveData = value;
             }
         }
-       
+
 #if NET4 || NET45
         X509CertificateCollection IConnection.Certificates
         {
@@ -644,7 +644,7 @@ namespace Microsoft.AspNet.SignalR.Client
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="The exception can be from user code, needs to be a catch all."), SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "This is called by the transport layer")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "The exception can be from user code, needs to be a catch all."), SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "This is called by the transport layer")]
         protected virtual void OnMessageReceived(JToken message)
         {
             if (Received != null)
@@ -738,7 +738,14 @@ namespace Microsoft.AspNet.SignalR.Client
 #elif NETFX_CORE
             request.UserAgent = CreateUserAgentString("SignalR.Client.WinRT");
 #elif NET45
-            request.UserAgent = CreateUserAgentString("SignalR.Client.NET45");
+            if (_transport.Name == "webSockets")
+            {
+                Headers.Add("user-agent", CreateUserAgentString("SignalR.Client.NET45"));
+            }
+            else
+            {
+                request.UserAgent = CreateUserAgentString("SignalR.Client.NET45");
+            }
 #else
             request.UserAgent = CreateUserAgentString("SignalR.Client.NET4");
 #endif
