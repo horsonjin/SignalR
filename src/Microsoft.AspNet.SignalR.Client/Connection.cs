@@ -355,7 +355,6 @@ namespace Microsoft.AspNet.SignalR.Client
             {
                 _connectTask = TaskAsyncHelper.Empty;
                 _disconnectCts = new CancellationTokenSource();
-
                 if (!ChangeState(ConnectionState.Disconnected, ConnectionState.Connecting))
                 {
                     return _connectTask;
@@ -738,11 +737,7 @@ namespace Microsoft.AspNet.SignalR.Client
 #elif NETFX_CORE
             request.UserAgent = CreateUserAgentString("SignalR.Client.WinRT");
 #elif NET45
-            if (_transport.Name == "webSockets")
-            {
-                Headers.Add("user-agent", CreateUserAgentString("SignalR.Client.NET45"));
-            }
-            else
+            if(_transport.Name != "webSockets")
             {
                 request.UserAgent = CreateUserAgentString("SignalR.Client.NET45");
             }
